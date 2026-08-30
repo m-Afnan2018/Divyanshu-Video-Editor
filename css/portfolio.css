@@ -429,7 +429,7 @@
   position: relative;
   border-radius: var(--_radius-s);
   overflow: hidden;
-  background: #000;
+  background: var(--base-opp);
 }
 .video-modal__player {
   display: block;
@@ -439,12 +439,12 @@
   max-height: 74vh;
   margin: 0 auto;
   object-fit: contain;
-  background: #000;
+  background: var(--base-opp);
 }
 .video-modal__caption {
   padding: 1.6rem 2rem;
-  background: #000;
-  color: rgba(255, 255, 255, 0.7);
+  background: var(--base-opp);
+  color: var(--t-opp-medium);
   font-size: 1.4rem;
   text-align: center;
 }

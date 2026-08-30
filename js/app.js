@@ -383,7 +383,13 @@ $(function() {
   // --------------------------------------------- //
   // Smooth Scrolling Start
   // --------------------------------------------- //
-  $('a[href*="#"]').not('[href="#"]').not('[href="#0"]').click(function(event) {
+  // .not('.video-popup-trigger'): these links use href="#video-modal" to open
+  // the Magnific Popup video player (see Magnific Popup Video block below),
+  // not to scroll the page. Without this exclusion, jQuery .offset() on the
+  // modal — hidden via .mfp-hide until Magnific Popup opens it — resolves to
+  // {top: 0}, so this handler was *also* animating the page to scrollTop 0
+  // on every video click, on top of the popup opening correctly.
+  $('a[href*="#"]').not('[href="#"]').not('[href="#0"]').not('.video-popup-trigger').click(function(event) {
     if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
       var target = $(this.hash);
       target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
