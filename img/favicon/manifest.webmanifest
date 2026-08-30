@@ -1,0 +1,15 @@
+{
+  "name": "Divyanshu — Video Editor Portfolio",
+  "short_name": "Divyanshu",
+  "description": "Video editor specializing in Instagram Reels, YouTube edits, motion graphics and color correction.",
+  "start_url": "/",
+  "scope": "/",
+  "id": "/",
+  "icons": [
+    { "src": "/img/favicon/android-icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "/img/favicon/android-icon-512.png", "type": "image/png", "sizes": "512x512" }
+  ],
+  "theme_color": "#161616",
+  "background_color": "#161616",
+  "display": "standalone"
+}

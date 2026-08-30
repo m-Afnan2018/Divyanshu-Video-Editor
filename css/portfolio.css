@@ -1,0 +1,667 @@
+/*! ------------------------------------------------
+ * Divyanshu — Video Editor Portfolio
+ * Custom layer on top of the Rayo template (main.css / plugins.css).
+ * Only new components + light overrides live here — everything else
+ * is inherited from the template's own design tokens.
+ * ------------------------------------------------ */
+
+/* ------------------------------------------------*/
+/* Header logo — real photo avatar (replaces the    */
+/* template's "D" letter mark); keeps the same       */
+/* 4.6rem/5.6rem sizing from main.css's .mxd-logo__image */
+/* ------------------------------------------------*/
+.mxd-logo__image {
+  -moz-border-radius: 50%;
+       border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  aspect-ratio: 1 / 1;
+}
+
+/* ------------------------------------------------*/
+/* Hero floating skill chips (Instagram / YouTube)  */
+/* ------------------------------------------------*/
+.hero-chip {
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: var(--base-tint);
+  border: 1px solid rgba(var(--base-rgb), 0.08);
+  box-shadow: 0 1.6rem 3.6rem rgba(0, 0, 0, 0.25);
+  color: var(--accent);
+  font-size: 3.6rem;
+}
+/* .hero-01-image is display:none below 768px (main.css) — only turn
+   this into a flex-centered chip once the template itself shows it,
+   so mobile stays uncluttered instead of overriding that hidden state. */
+@media only screen and (min-width: 768px) {
+  .hero-chip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+@media only screen and (min-width: 1200px) {
+  .hero-chip {
+    font-size: 4.8rem;
+  }
+}
+
+/* ------------------------------------------------*/
+/* Hero skill-word marquee — the theme's own CSS has */
+/* two bugs that make this pill render empty, on any  */
+/* content/size: (1) `.marquee-right--gsap            */
+/* .marquee__toright { translate: calc(-100% + 100vw) */
+/* !important }` (main.css) is a starting offset sized */
+/* for full-viewport marquees; applied to this compact */
+/* pill it shoves the whole scrolling track off the    */
+/* visible window, and composes independently of GSAP's*/
+/* own `transform` animation so JS can't correct it.    */
+/* (2) the theme's generic `.marquee__item { width:     */
+/* 430px; height:320px }` (meant for a different, image-*/
+/* preview marquee elsewhere) inflates each word to that*/
+/* size, pushing the centered text outside the pill too.*/
+/* Both are corrected here, scoped to just this pill —  */
+/* everything else (size, position, 14rem type) is the  */
+/* template's own untouched CSS.                        */
+/* ------------------------------------------------*/
+.mxd-hero-01__marquee .marquee__toright {
+  translate: none !important;
+}
+.mxd-hero-01__marquee .marquee__item.item-regular {
+  width: auto;
+  height: auto;
+  overflow: visible;
+}
+
+/* "Edit" is styled to read as the same word-weight as "Design,"  */
+/* right next to it — matching `h1`/`.hero-01-title`'s own type   */
+/* scale (6/8/12/14rem) exactly, at every breakpoint. The star    */
+/* icon is sized proportionally as a separator, not to match.     */
+.mxd-hero-01__marquee .marquee__item.item-regular p {
+  font-size: 6rem;
+}
+.mxd-hero-01__marquee .marquee__item.item-regular i {
+  font-size: 3.4rem;
+  color: var(--t-opp-bright);
+}
+@media only screen and (min-width: 768px) {
+  .mxd-hero-01__marquee .marquee__item.item-regular p {
+    font-size: 8rem;
+  }
+  .mxd-hero-01__marquee .marquee__item.item-regular i {
+    font-size: 4.4rem;
+  }
+}
+@media only screen and (min-width: 1200px) {
+  .mxd-hero-01__marquee .marquee__item.item-regular p {
+    font-size: 12rem;
+  }
+  .mxd-hero-01__marquee .marquee__item.item-regular i {
+    font-size: 6.6rem;
+  }
+}
+@media only screen and (min-width: 1600px) {
+  .mxd-hero-01__marquee .marquee__item.item-regular p {
+    font-size: 14rem;
+  }
+  .mxd-hero-01__marquee .marquee__item.item-regular i {
+    font-size: 7.6rem;
+  }
+}
+
+/* A fourth bug — this one structural, not just sizing: the     */
+/* shared `marqueeRight()` animation (app.js) translates this   */
+/* track in the *positive* x direction. That's fine for the     */
+/* other, much-wider marquees it also drives, but for this small */
+/* pill it walks the visible window away from where the (single- */
+/* direction) duplicated content lives, so once per loop the     */
+/* window drifts past the very first item into space nothing was */
+/* ever laid out in — a brief but real blank flash, no matter how */
+/* the item count/size above is tuned. Fixed by unhooking GSAP    */
+/* from just this element (see hero-marquee.js) and driving it   */
+/* with a plain, always-seamless CSS loop instead: translating an */
+/* already-doubled track by exactly -50% of its own width means   */
+/* the second copy lines up pixel-for-pixel where the first one   */
+/* started, so the reset is invisible and the pill is never empty.*/
+@keyframes mxdHeroMarqueeScroll {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.mxd-hero-01__marquee .marquee__toright.hero-marquee-fixed {
+  animation: mxdHeroMarqueeScroll 9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mxd-hero-01__marquee .marquee__toright.hero-marquee-fixed {
+    animation: none;
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------*/
+/* One-line text marquees (skills / tools) — icon   */
+/* ------------------------------------------------*/
+.marquee__image i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 2.2rem;
+  color: var(--accent);
+}
+@media only screen and (min-width: 768px) {
+  .marquee__image i {
+    font-size: 3.4rem;
+  }
+}
+
+/* ------------------------------------------------*/
+/* Reel Cards (Featured Reels — vertical marquee)   */
+/* ------------------------------------------------*/
+.reel-marquee .marquee__top,
+.reel-marquee .marquee__bottom {
+  gap: 2rem;
+}
+.reel-card-wrap {
+  flex-shrink: 0;
+  width: 20rem;
+}
+@media only screen and (min-width: 768px) {
+  .reel-card-wrap {
+    width: 24rem;
+  }
+}
+.reel-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  border-radius: var(--_radius-m);
+  overflow: hidden;
+  background: var(--base-tint);
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.25);
+}
+.reel-card__thumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.reel-card__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 5.6rem;
+  height: 5.6rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #fff;
+  font-size: 1.8rem;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.reel-card__tag {
+  position: absolute;
+  left: 1.6rem;
+  bottom: 1.6rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 10rem;
+  background: rgba(22, 22, 22, 0.55);
+  -webkit-backdrop-filter: blur(6px);
+          backdrop-filter: blur(6px);
+  color: #fff;
+  font-size: 1.3rem;
+  letter-spacing: 0.02rem;
+}
+.reel-card__tag.is-ai {
+  background: var(--accent);
+  color: var(--t-opp-bright);
+}
+.no-touch .reel-card:hover .reel-card__play {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+/* ------------------------------------------------*/
+/* Freelance Reel (Services Stack card 5) — the      */
+/* theme's global `img { width:100%; height:auto }`  */
+/* reset (main.css) doesn't cover <video>, and below  */
+/* the template's own 992px breakpoint .service-img   */
+/* has no positioning rule at all — so without this,  */
+/* these two <video> elements would render at their   */
+/* native pixel size (huge) on mobile. Scoped to       */
+/* <992px only so it never fights the theme's own      */
+/* ≥992px absolute-position rule for .service-img.     */
+/* ------------------------------------------------*/
+@media only screen and (max-width: 991px) {
+  #freelance-reel-video-s,
+  #freelance-reel-video-m {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+}
+.freelance-reel-trigger {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ------------------------------------------------*/
+/* YouTube Edits Grid                               */
+/* ------------------------------------------------*/
+.youtube-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+@media only screen and (min-width: 768px) {
+  .youtube-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media only screen and (min-width: 1200px) {
+  .youtube-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.yt-card {
+  display: block;
+  border-radius: var(--_radius-m);
+  overflow: hidden;
+  background: var(--base-tint);
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.2);
+}
+.yt-card__media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+.yt-card__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.yt-card__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6.4rem;
+  height: 6.4rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #fff;
+  font-size: 2rem;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+.no-touch .yt-card:hover .yt-card__play {
+  transform: translate(-50%, -50%) scale(1.1);
+  background: var(--accent);
+  color: var(--base-opp);
+  border-color: var(--accent);
+}
+.yt-card__info {
+  padding: 2rem 2.2rem 2.4rem;
+}
+.yt-card__title {
+  font: normal var(--fw-medium) 1.9rem/1.3 var(--_font-accent);
+  color: var(--t-bright);
+  margin-bottom: 1.2rem;
+}
+.yt-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+/* ------------------------------------------------*/
+/* Approach list — icon slot                        */
+/* ------------------------------------------------*/
+.approach-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  background: var(--base-tint);
+  color: var(--accent);
+  font-size: 2.4rem;
+}
+
+/* ------------------------------------------------*/
+/* Partners / Tools cards — icons & text logos      */
+/* ------------------------------------------------*/
+.mxd-partners-cards__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 6rem;
+}
+.mxd-partners-cards__logo i {
+  font-size: 4rem;
+  opacity: 0.6;
+  transition: opacity var(--_animspeed-slow) ease;
+}
+.no-touch .mxd-partners-cards__inner:hover .mxd-partners-cards__logo i {
+  opacity: 1;
+}
+.mxd-partners-cards__logo img {
+  width: 5.6rem;
+  height: 5.6rem;
+}
+.text-logo {
+  font: normal var(--fw-medium) 2rem/1.2 var(--_font-accent);
+  color: var(--t-bright);
+  opacity: 0.6;
+  transition: opacity var(--_animspeed-slow) ease;
+}
+.no-touch .mxd-partners-cards__inner:hover .text-logo {
+  opacity: 1;
+}
+
+/* ------------------------------------------------*/
+/* CTA promo — icon + background override           */
+/* (drop the template's placeholder image URL)      */
+/* ------------------------------------------------*/
+.mxd-promo__bg {
+  background-image: none;
+  background: radial-gradient(circle at 75% 30%, rgba(221, 241, 96, 0.28), rgba(159, 139, 231, 0.22) 45%, transparent 72%);
+}
+.promo-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+}
+.promo-icon i {
+  font-size: 3.4rem;
+}
+@media only screen and (min-width: 768px) {
+  .promo-icon i {
+    font-size: 4.6rem;
+  }
+}
+
+/* ------------------------------------------------*/
+/* Footer huge title (replaces hand-drawn wordmark) */
+/* ------------------------------------------------*/
+.mxd-footer__huge-title {
+  width: 100%;
+  margin: 0;
+  padding: 0 3rem;
+  text-align: center;
+  font: normal var(--fw-bold) clamp(5rem, 16vw, 20rem)/0.9 var(--_font-accent);
+  letter-spacing: -0.02em;
+  color: var(--t-bright);
+  /* purely decorative — its tall line-height makes it visually bleed
+     up into the CTA card above, so it must never intercept pointer
+     events meant for that card's hover/tilt (or anything else) */
+  pointer-events: none;
+}
+
+/* ------------------------------------------------*/
+/* Video Modal (magnific-popup inline)              */
+/* ------------------------------------------------*/
+.video-modal {
+  max-width: 96rem;
+  max-height: 86vh;
+  margin: 0 auto;
+}
+.video-modal__inner {
+  position: relative;
+  border-radius: var(--_radius-s);
+  overflow: hidden;
+  background: #000;
+}
+.video-modal__player {
+  display: block;
+  width: auto;
+  max-width: 90vw;
+  height: auto;
+  max-height: 74vh;
+  margin: 0 auto;
+  object-fit: contain;
+  background: #000;
+}
+.video-modal__caption {
+  padding: 1.6rem 2rem;
+  background: #000;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+/* ------------------------------------------------*/
+/* Tools & Platforms — 3D Cards                      */
+/* ------------------------------------------------*/
+.mxd-partners-cards {
+  position: relative;
+  overflow: hidden;
+}
+
+.mxd-partners-cards__canvas {
+  position: absolute;
+  inset: -15% 0;
+  z-index: 0;
+  width: 100%;
+  height: 130%;
+  pointer-events: none;
+  opacity: 0.6;
+  -webkit-mask-image: radial-gradient(ellipse 75% 75% at 50% 50%, #000 45%, transparent 92%);
+          mask-image: radial-gradient(ellipse 75% 75% at 50% 50%, #000 45%, transparent 92%);
+}
+
+.mxd-partners-cards > .container-fluid {
+  position: relative;
+  z-index: 1;
+}
+
+.mxd-partners-cards__item {
+  height: 230px;
+  padding: 6px;
+}
+
+.mxd-partners-cards__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+  padding: 28px 20px;
+  border-radius: var(--_radius-m);
+  border: 1px solid var(--base-shade);
+  background: linear-gradient(165deg, var(--base-tint) 0%, var(--base) 100%);
+  overflow: hidden;
+  -webkit-transform-style: preserve-3d;
+          transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.mxd-partners-cards__inner::before {
+  content: none;
+}
+.no-touch .mxd-partners-cards__inner:hover {
+  border-color: var(--tool-accent, var(--accent));
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6);
+}
+
+.mxd-partners-cards__glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), var(--tool-accent, var(--accent)), transparent 70%);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.no-touch .mxd-partners-cards__inner:hover .mxd-partners-cards__glow {
+  opacity: 0.16;
+}
+
+.mxd-partners-cards__icon {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--_radius-s);
+  background: var(--base-shade);
+  border: 1px solid var(--base-shade);
+  color: var(--t-medium);
+  -webkit-transform: translateZ(30px);
+          transform: translateZ(30px);
+  transition: color 0.35s ease, border-color 0.35s ease, transform 0.5s var(--_animbezier);
+}
+.mxd-partners-cards__icon svg {
+  width: 30px;
+  height: 30px;
+  display: block;
+}
+.mxd-partners-cards__icon i {
+  font-size: 2.8rem;
+  line-height: 1;
+}
+.no-touch .mxd-partners-cards__inner:hover .mxd-partners-cards__icon {
+  color: var(--tool-accent, var(--accent));
+  border-color: var(--tool-accent, var(--accent));
+  -webkit-transform: translateZ(50px) scale(1.05);
+          transform: translateZ(50px) scale(1.05);
+}
+
+.mxd-partners-cards__name {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--t-medium);
+  text-align: center;
+  -webkit-transform: translateZ(18px);
+          transform: translateZ(18px);
+  transition: color 0.35s ease, transform 0.5s var(--_animbezier);
+}
+.no-touch .mxd-partners-cards__inner:hover .mxd-partners-cards__name {
+  color: var(--t-bright);
+}
+
+.tool-instagram { --tool-accent: #E1306C; }
+.tool-youtube { --tool-accent: #FF0000; }
+.tool-premiere { --tool-accent: #9999FF; }
+.tool-aftereffects { --tool-accent: #9999FF; }
+.tool-photoshop { --tool-accent: #31A8FF; }
+.tool-illustrator { --tool-accent: #FF9A00; }
+.tool-audition { --tool-accent: #00E4D0; }
+.tool-capcut { --tool-accent: var(--accent); }
+
+/* ------------------------------------------------*/
+/* CTA / Contact promo — 3D tilt + cursor glow       */
+/* (reuses initToolCardTilt() via [data-tilt-card])  */
+/* .mxd-promo__inner is the *actual* visible white   */
+/* card (background, radius, overflow all come from  */
+/* the template's own rule for that class) and is now */
+/* the tilt target directly, so the whole card rotates */
+/* as one piece on hover — not just its content.       */
+/* Its scroll-scrubbed entrance animation              */
+/* (.anim-zoom-out-container, GSAP) moved up onto a    */
+/* new outer .mxd-promo__zoom wrapper instead, since    */
+/* app.js targets that class generically — putting both */
+/* GSAP's transform and the pointer-tilt transform on   */
+/* the same element would have them fight every frame.  */
+/* .mxd-promo__inner's border-radius: inherit keeps its  */
+/* corners locked to whatever radius GSAP is animating   */
+/* on the zoom wrapper, so the entrance "unroll" and the  */
+/* hover tilt both read as one continuous rounded card.   */
+/* ------------------------------------------------*/
+.mxd-promo__zoom {
+  display: block;
+  width: 100%;
+}
+.mxd-promo__inner {
+  -moz-border-radius: inherit;
+       border-radius: inherit;
+  -webkit-transform-style: preserve-3d;
+          transform-style: preserve-3d;
+}
+.mxd-promo__glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), var(--accent), transparent 70%);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.no-touch .mxd-promo__inner:hover .mxd-promo__glow {
+  opacity: 0.18;
+}
+
+/* ------------------------------------------------*/
+/* Statistics Cards — 3D scenes                      */
+/* ------------------------------------------------*/
+.mxd-stats-cards__image[data-stats-scene] {
+  height: auto;
+  pointer-events: none;
+  opacity: 0.9;
+}
+.mxd-stats-cards-image-1[data-stats-scene] {
+  aspect-ratio: 1 / 1;
+}
+.mxd-stats-cards-image-2[data-stats-scene],
+.mxd-stats-cards-image-3[data-stats-scene] {
+  aspect-ratio: 16 / 10;
+}
+.mxd-stats-cards-image-4[data-stats-scene] {
+  aspect-ratio: 1 / 1;
+}
+@media (max-width: 767px) {
+  .mxd-stats-cards__image[data-stats-scene] {
+    width: 70%;
+    max-width: 320px;
+    opacity: 0.8;
+  }
+}
+
+/* ------------------------------------------------*/
+/* Reduced motion: keep tilt/hover effects calm      */
+/* ------------------------------------------------*/
+@media (prefers-reduced-motion: reduce) {
+  .reel-card,
+  .yt-card {
+    transition: none !important;
+  }
+  .mxd-partners-cards__inner,
+  .mxd-partners-cards__icon,
+  .mxd-partners-cards__name {
+    transition: none !important;
+  }
+  .mxd-partners-cards__canvas {
+    display: none;
+  }
+  .mxd-stats-cards__image[data-stats-scene] {
+    display: none;
+  }
+}
