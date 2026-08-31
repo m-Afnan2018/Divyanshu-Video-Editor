@@ -2187,6 +2187,7 @@ p.t-semibold {
       -ms-flex-pack: left;
           justify-content: left;
   gap: 1rem;
+  max-width: 100%;
   font: normal var(--fw-regular) 2.2rem/1.2 var(--_font-accent);
   color: var(--t-bright);
 }
@@ -2194,11 +2195,14 @@ p.t-semibold {
   width: 1.9rem;
   height: 1.9rem;
   fill: var(--t-bright);
+  flex-shrink: 0;
 }
 .mxd-point-subtitle span {
   font-weight: var(--fw-regular);
 }
 .mxd-point-subtitle a {
+  min-width: 0;
+  overflow-wrap: anywhere;
   color: var(--t-bright);
   background: none;
 }
