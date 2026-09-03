@@ -4943,6 +4943,7 @@ form textarea:required:valid {
   height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
+    object-position: 75% center;
 }
 @media only screen and (min-width: 768px) {
   .mxd-divider__image {
