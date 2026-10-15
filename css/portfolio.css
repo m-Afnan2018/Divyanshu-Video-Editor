@@ -166,6 +166,19 @@
 .reel-marquee .marquee__bottom {
   gap: 2rem;
 }
+.reel-marquee.is-draggable {
+  cursor: grab;
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.reel-marquee.is-draggable.is-dragging {
+  cursor: grabbing;
+}
+.reel-marquee.is-draggable .reel-card__thumb {
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
 .reel-card-wrap {
   flex-shrink: 0;
   width: 20rem;

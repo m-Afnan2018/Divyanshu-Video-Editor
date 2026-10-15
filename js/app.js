@@ -57,6 +57,7 @@
 
 gsap.registerPlugin(ScrollTrigger);
 gsap.registerPlugin(Flip);
+gsap.registerPlugin(Observer);
 
 // --------------------------------------------- //
 // Loader & Loading Animation Start
@@ -1305,8 +1306,53 @@ const initMarquees = () => {
           tween.invalidate().restart();
         }
       });
+
+      // Reels marquee: also let people drag/swipe through it directly,
+      // on top of the existing auto-scroll (mouse on desktop, touch on phone).
+      if (itemBlock.classList.contains("reel-marquee")) {
+        initMarqueeDrag(itemBlock, master, marqueeObject.top.width);
+      }
     });
   }
+};
+const initMarqueeDrag = (itemBlock, master, referenceWidth) => {
+  if (typeof Observer === "undefined") return;
+  itemBlock.classList.add("is-draggable");
+  // pixels-per-second the child tweens travel, so dragged distance
+  // maps 1:1 onto the marquee's own timeline instead of feeling arbitrary.
+  const pxPerSecond = referenceWidth / 30;
+  let dragged = false;
+
+  Observer.create({
+    target: itemBlock,
+    type: "touch,pointer",
+    dragMinimum: 3,
+    tolerance: 3,
+    onPress: () => {
+      dragged = false;
+      itemBlock.classList.add("is-dragging");
+    },
+    onDrag: (self) => {
+      dragged = true;
+      master.time(master.time() - self.deltaX / pxPerSecond);
+    },
+    onRelease: () => {
+      itemBlock.classList.remove("is-dragging");
+    }
+  });
+
+  // A drag/swipe shouldn't also open a reel's video popup on release.
+  itemBlock.addEventListener(
+    "click",
+    (e) => {
+      if (dragged) {
+        e.preventDefault();
+        e.stopPropagation();
+        dragged = false;
+      }
+    },
+    true
+  );
 };
 const marquee = (item, time, direction) => {
   let mod = gsap.utils.wrap(0, 50);
