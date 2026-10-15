@@ -57,7 +57,6 @@
 
 gsap.registerPlugin(ScrollTrigger);
 gsap.registerPlugin(Flip);
-gsap.registerPlugin(Observer);
 
 // --------------------------------------------- //
 // Loader & Loading Animation Start
@@ -1316,14 +1315,15 @@ const initMarquees = () => {
   }
 };
 const initMarqueeDrag = (itemBlock, master, referenceWidth) => {
-  if (typeof Observer === "undefined") return;
+  // Observer isn't a global in this bundle; ScrollTrigger exposes it via .observe()
+  if (typeof ScrollTrigger === "undefined" || typeof ScrollTrigger.observe !== "function") return;
   itemBlock.classList.add("is-draggable");
   // pixels-per-second the child tweens travel, so dragged distance
   // maps 1:1 onto the marquee's own timeline instead of feeling arbitrary.
   const pxPerSecond = referenceWidth / 30;
   let dragged = false;
 
-  Observer.create({
+  ScrollTrigger.observe({
     target: itemBlock,
     type: "touch,pointer",
     dragMinimum: 3,
